@@ -1,13 +1,15 @@
 package com.example.restfulapi.service;
 
 import com.example.restfulapi.domain.Agent;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-public class EncryptAgent {
+@Service
+public class EncryptAgentService {
 
     public static SecretKey createKey(Agent agent) throws NoSuchPaddingException, NoSuchAlgorithmException {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");

@@ -3,8 +3,7 @@ package com.example.restfulapi.controller;
 import com.example.restfulapi.domain.Agent;
 import com.example.restfulapi.domain.EncryptionKey;
 import com.example.restfulapi.service.AgentService;
-import com.example.restfulapi.service.EncryptAgent;
-import com.example.restfulapi.service.Encryption;
+import com.example.restfulapi.service.EncryptAgentService;
 import com.example.restfulapi.service.EncryptionKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,10 +17,7 @@ import javax.crypto.*;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 @Controller
 public class AppController {
@@ -39,7 +35,7 @@ public class AppController {
             UnsupportedEncodingException, InvalidKeyException {
         List<Agent> cipherAgents = agentService.getAllAgents();
         for(Agent cipherAgent: cipherAgents){
-           EncryptAgent.decryptAgent(cipherAgent);
+           EncryptAgentService.decryptAgent(cipherAgent);
         }
         model.addAttribute("agents", cipherAgents);
         return "home";
@@ -62,8 +58,8 @@ public class AppController {
     public String saveAgent(@ModelAttribute("agent") Agent agent) throws NoSuchPaddingException,
             InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException,
             UnsupportedEncodingException {
-        SecretKey secretKey = EncryptAgent.createKey(agent);
-        Agent cipherAgent = EncryptAgent.encryptAgent(agent);
+        SecretKey secretKey = EncryptAgentService.createKey(agent);
+        Agent cipherAgent = EncryptAgentService.encryptAgent(agent);
         agentService.save(cipherAgent);
         return "redirect:/";
     }
