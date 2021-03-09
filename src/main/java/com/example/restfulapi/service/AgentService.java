@@ -39,32 +39,7 @@ public class AgentService {
         agentRepository.deleteById(id);
     }
 
-    public Agent encryptAgent(Agent agent) throws NoSuchPaddingException,
-            BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException,
-            UnsupportedEncodingException, InvalidKeyException {
 
-        Cipher firstNameEncryptionCipher = Encryption.createEncryptionCipher(agent.getFirstName());
-        Cipher lastNameEncryptionCipher = Encryption.createEncryptionCipher(agent.getLastName());
-
-        firstNameEncryptionCipher.doFinal(agent.getFirstName().getBytes());
-        lastNameEncryptionCipher.doFinal(agent.getLastName().getBytes());
-
-        return new Agent(firstNameEncryptionCipher.toString(), lastNameEncryptionCipher.toString());
-    }
-
-    public Agent decryptAgent(Agent agent) throws NoSuchPaddingException,
-            BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException,
-            UnsupportedEncodingException, InvalidKeyException {
-
-
-        Cipher firstNameDecryptionCipher = Encryption.createDecryptionCipher(agent.getFirstName());
-        Cipher lastNameDecryptionCipher = Encryption.createDecryptionCipher(agent.getLastName());
-
-        firstNameDecryptionCipher.doFinal(agent.getFirstName().getBytes());
-        lastNameDecryptionCipher.doFinal(agent.getLastName().getBytes());
-
-        return new Agent(firstNameDecryptionCipher.toString(), lastNameDecryptionCipher.toString());
-    }
 
 
 }

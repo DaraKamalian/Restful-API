@@ -3,6 +3,7 @@ package com.example.restfulapi.controller;
 import com.example.restfulapi.domain.Agent;
 import com.example.restfulapi.domain.EncryptionKey;
 import com.example.restfulapi.service.AgentService;
+import com.example.restfulapi.service.EncryptAgent;
 import com.example.restfulapi.service.Encryption;
 import com.example.restfulapi.service.EncryptionKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -39,11 +37,11 @@ public class AppController {
     public String viewHomePage(Model model) throws NoSuchPaddingException,
             BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException,
             UnsupportedEncodingException, InvalidKeyException {
-        List<Agent> agents = agentService.getAllAgents();
-        for(Agent agent: agents){
-            agentService.decryptAgent(agent);
+        List<Agent> cipherAgents = agentService.getAllAgents();
+        for(Agent cipherAgent: cipherAgents){
+           EncryptAgent.decryptAgent(cipherAgent);
         }
-        model.addAttribute("agents", agents);
+        model.addAttribute("agents", cipherAgents);
         return "home";
     }
 
@@ -64,15 +62,12 @@ public class AppController {
     public String saveAgent(@ModelAttribute("agent") Agent agent) throws NoSuchPaddingException,
             InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException,
             UnsupportedEncodingException {
-        Agent cipherAgent = agentService.encryptAgent(agent);
+        SecretKey secretKey = EncryptAgent.createKey(agent);
+        Agent cipherAgent = EncryptAgent.encryptAgent(agent);
         agentService.save(cipherAgent);
         return "redirect:/";
     }
 
-//    @RequestMapping(value = "/generateNewKey")
-//    public EncryptionKey generateNewKey(@ModelAttribute("agent") Agent agent) {
-//        return agentService.generateNewKey(agent);
-//    }
 
     @RequestMapping("/delete/{id}")
     public String deleteAgent(@PathVariable(name = "id") Long id) {
