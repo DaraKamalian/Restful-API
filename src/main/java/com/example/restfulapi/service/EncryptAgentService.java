@@ -11,10 +11,8 @@ import java.security.SecureRandom;
 @Service
 public class EncryptAgentService {
 
-    public static SecretKey createKey(Agent agent) throws NoSuchPaddingException, NoSuchAlgorithmException {
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+    public static SecretKey createKey(Agent agent) throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-//        byte[] iv = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         SecureRandom secureRandom = new SecureRandom();
         keyGenerator.init(128, secureRandom);
 
@@ -24,26 +22,26 @@ public class EncryptAgentService {
 
     public static Agent encryptAgent(Agent agent) throws NoSuchPaddingException, NoSuchAlgorithmException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        byte[] iv = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        cipher.init(Cipher.ENCRYPT_MODE, createKey(agent));
+//        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+//        byte[] iv = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+//        cipher.init(Cipher.ENCRYPT_MODE, createKey(agent));
+//
+//        byte[] cipherAgentFirstName = cipher.doFinal(agent.getFirstName().getBytes());
+//        byte[] cipherAgentLastName = cipher.doFinal(agent.getLastName().getBytes());
 
-        byte[] cipherAgentFirstName = cipher.doFinal(agent.getFirstName().getBytes());
-        byte[] cipherAgentLastName = cipher.doFinal(agent.getLastName().getBytes());
-
-        return new Agent(cipherAgentFirstName.toString(),cipherAgentLastName.toString());
+        return new Agent(agent.toString(),agent.toString());
 
     }
 
     public static Agent decryptAgent(Agent agent) throws NoSuchPaddingException, NoSuchAlgorithmException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.DECRYPT_MODE, createKey(agent) );
+//        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+//        cipher.init(Cipher.DECRYPT_MODE, createKey(agent) );
+//
+//        byte[] decipherAgentFirstName = cipher.doFinal(agent.getFirstName().getBytes());
+//        byte[] decipherAgentLastName = cipher.doFinal(agent.getLastName().getBytes());
 
-        byte[] decipherAgentFirstName = cipher.doFinal(agent.getFirstName().getBytes());
-        byte[] decipherAgentLastName = cipher.doFinal(agent.getLastName().getBytes());
-
-        return new Agent(decipherAgentFirstName.toString(),decipherAgentLastName.toString());
+        return new Agent(agent.toString(),agent.toString());
 
     }
 

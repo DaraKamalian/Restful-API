@@ -19,12 +19,12 @@ import java.util.stream.StreamSupport;
 public class AgentController {
     @Autowired
     private AgentRepository agentRepository;
-   @Autowired
+    @Autowired
     private EncryptAgentService encryptAgentService;
 
-   @GetMapping("/")
-   public List agents() {
-       return StreamSupport.stream(agentRepository.findAll().spliterator(), false).collect(Collectors.toList());
-   }
+    @GetMapping("/")
+    public List agents() {
+        return StreamSupport.stream(agentRepository.findAll().spliterator(), false).collect(Collectors.toList());
+    }
 
 }
