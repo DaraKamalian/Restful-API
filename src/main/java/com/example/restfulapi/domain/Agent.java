@@ -5,6 +5,7 @@ import com.example.restfulapi.domain.EncryptionKey;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -89,5 +90,12 @@ public class Agent {
 
     public void setEncryptionKeys(List<EncryptionKey> encryptionKeys) {
         this.encryptionKeys = encryptionKeys;
+    }
+
+    public void addKey(EncryptionKey encryptionKey){
+      if(encryptionKeys==null)
+          encryptionKeys =  new ArrayList<>();
+        encryptionKey.setAgent(this);
+        encryptionKeys.add(encryptionKey);
     }
 }

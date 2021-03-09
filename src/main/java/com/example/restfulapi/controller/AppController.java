@@ -13,6 +13,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -29,8 +36,13 @@ public class AppController {
     private EncryptionKey cipherKey;
 
     @RequestMapping("/")
-    public String viewHomePage(Model model) {
+    public String viewHomePage(Model model) throws NoSuchPaddingException,
+            BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException,
+            UnsupportedEncodingException, InvalidKeyException {
         List<Agent> agents = agentService.getAllAgents();
+        for(Agent agent: agents){
+            agentService.decryptAgent(agent);
+        }
         model.addAttribute("agents", agents);
         return "home";
     }
@@ -49,31 +61,18 @@ public class AppController {
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String saveAgent(@ModelAttribute("agent") Agent agent) {
-        EncryptionKey key = new EncryptionKey(new Random().nextInt(100) + 1, agent);
-
-        agentService.save(agent);
-        String cipherAgentFirstName = Encryption.encrypt(agent.getFirstName(), key);
-        String cipherAgentLastName = Encryption.encrypt(agent.getLastName(), key);
-
-        agent.setFirstName(cipherAgentFirstName);
-        agent.setLastName(cipherAgentLastName);
-        agent.setDateAdded(LocalDate.now());
-        agent.setEncryptionKeys(Arrays.asList(key));
-//        Agent cipherAgent = new Agent();
-//        cipherAgent.setFirstName(cipherAgentFirstName);
-//        cipherAgent.setLastName(cipherAgentLastName);
-//        cipherAgent.setDateAdded(LocalDate.now());
-//        cipherAgent.setEncryptionKeys(Arrays.asList(key));
-
-        agentService.save(agent);
+    public String saveAgent(@ModelAttribute("agent") Agent agent) throws NoSuchPaddingException,
+            InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException,
+            UnsupportedEncodingException {
+        Agent cipherAgent = agentService.encryptAgent(agent);
+        agentService.save(cipherAgent);
         return "redirect:/";
     }
 
-    @RequestMapping(value = "/generateNewKey")
-    public EncryptionKey generateNewKey(@ModelAttribute("agent") Agent agent) {
-        return agentService.generateNewKey(agent);
-    }
+//    @RequestMapping(value = "/generateNewKey")
+//    public EncryptionKey generateNewKey(@ModelAttribute("agent") Agent agent) {
+//        return agentService.generateNewKey(agent);
+//    }
 
     @RequestMapping("/delete/{id}")
     public String deleteAgent(@PathVariable(name = "id") Long id) {

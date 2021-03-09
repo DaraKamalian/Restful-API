@@ -6,6 +6,13 @@ import com.example.restfulapi.repository.AgentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Random;
 
@@ -32,18 +39,32 @@ public class AgentService {
         agentRepository.deleteById(id);
     }
 
-    public Agent encryptAgent(Agent agent) {
-        EncryptionKey encryptionKey = new EncryptionKey(agent);
+    public Agent encryptAgent(Agent agent) throws NoSuchPaddingException,
+            BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException,
+            UnsupportedEncodingException, InvalidKeyException {
 
-        String encryptedAgentFirstName = Encryption.encrypt(agent.getFirstName(),
-                encryptionKey);
-        String encryptedAgentLastName = Encryption.encrypt(agent.getLastName(),
-                encryptionKey);
+        Cipher firstNameEncryptionCipher = Encryption.createEncryptionCipher(agent.getFirstName());
+        Cipher lastNameEncryptionCipher = Encryption.createEncryptionCipher(agent.getLastName());
 
-        return new Agent(encryptedAgentFirstName, encryptedAgentLastName);
+        firstNameEncryptionCipher.doFinal(agent.getFirstName().getBytes());
+        lastNameEncryptionCipher.doFinal(agent.getLastName().getBytes());
+
+        return new Agent(firstNameEncryptionCipher.toString(), lastNameEncryptionCipher.toString());
     }
 
-    public EncryptionKey generateNewKey(Agent agent) {
-        return new EncryptionKey(agent) ;
+    public Agent decryptAgent(Agent agent) throws NoSuchPaddingException,
+            BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException,
+            UnsupportedEncodingException, InvalidKeyException {
+
+
+        Cipher firstNameDecryptionCipher = Encryption.createDecryptionCipher(agent.getFirstName());
+        Cipher lastNameDecryptionCipher = Encryption.createDecryptionCipher(agent.getLastName());
+
+        firstNameDecryptionCipher.doFinal(agent.getFirstName().getBytes());
+        lastNameDecryptionCipher.doFinal(agent.getLastName().getBytes());
+
+        return new Agent(firstNameDecryptionCipher.toString(), lastNameDecryptionCipher.toString());
     }
+
+
 }

@@ -42,4 +42,12 @@ public class EncryptionKey {
         this.value = value;
         this.agent = agent;
     }
+
+    public Agent getAgent() {
+        return agent;
+    }
+
+    public void setAgent(Agent agent) {
+        this.agent = agent;
+    }
 }

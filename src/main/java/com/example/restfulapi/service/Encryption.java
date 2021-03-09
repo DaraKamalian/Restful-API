@@ -1,22 +1,39 @@
 package com.example.restfulapi.service;
 
+import com.example.restfulapi.domain.Agent;
 import com.example.restfulapi.domain.EncryptionKey;
 
-public class Encryption {
-    public static String encrypt(String text, EncryptionKey key) {
-        StringBuffer result = new StringBuffer();
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
-        for (int i = 0; i < text.length(); i++) {
-            if (Character.isUpperCase(text.charAt(i))) {
-                char ch = (char) (((int) text.charAt(i) +
-                        key.getValue() - 65) % 26 + 65);
-                result.append(ch);
-            } else {
-                char ch = (char) (((int) text.charAt(i) +
-                        key.getValue() - 97) % 26 + 97);
-                result.append(ch);
-            }
-        }
-        return result.toString();
+public class Encryption {
+
+    public static Cipher createEncryptionCipher(String plainText) throws NoSuchPaddingException, NoSuchAlgorithmException,
+            InvalidKeyException, UnsupportedEncodingException, BadPaddingException, IllegalBlockSizeException {
+        Cipher cipher = Cipher.getInstance("AES");
+        byte[] keyBytes   = new byte[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+        String algorithm  = "RawBytes";
+        SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
+
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        return cipher;
     }
+
+    public static Cipher createDecryptionCipher(String plainText) throws NoSuchPaddingException, NoSuchAlgorithmException,
+            InvalidKeyException, UnsupportedEncodingException, BadPaddingException, IllegalBlockSizeException {
+        Cipher cipher = Cipher.getInstance("AES");
+        byte[] keyBytes   = new byte[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+        String algorithm  = "RawBytes";
+        SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
+
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        return cipher;
+    }
+
 }
