@@ -1,6 +1,7 @@
 package com.example.restfulapi.domain;
 
 import javax.persistence.*;
+import java.security.Key;
 import java.time.LocalDate;
 
 @Entity
@@ -9,7 +10,7 @@ public class EncryptionKey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int value;
+    private byte[] value;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "agent_id")
@@ -23,11 +24,11 @@ public class EncryptionKey {
         this.id = id;
     }
 
-    public int getValue() {
+    public byte[] getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(byte[] value) {
         this.value = value;
     }
 
@@ -38,10 +39,15 @@ public class EncryptionKey {
     public EncryptionKey() {
     }
 
-    public EncryptionKey(int value, Agent agent) {
+    public EncryptionKey(byte[] value, Agent agent) {
         this.value = value;
         this.agent = agent;
     }
+
+    public EncryptionKey(byte[] value) {
+        this.value = value;
+    }
+
 
     public Agent getAgent() {
         return agent;

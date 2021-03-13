@@ -26,10 +26,6 @@ public class Agent {
     )
     private List<EncryptionKey> encryptionKeys;
 
-    public static String cipher(String string) {
-        return string + "2";
-    }
-
     public String getFirstName() {
         return firstName;
     }
