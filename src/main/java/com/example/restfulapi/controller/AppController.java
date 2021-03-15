@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.crypto.*;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -38,12 +39,12 @@ public class AppController {
     @RequestMapping("/")
     public String viewHomePage(Model model) throws NoSuchPaddingException,
             BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException,
-            IOException, InvalidKeyException {
+            IOException, InvalidKeyException, InvalidAlgorithmParameterException {
 
         List<Agent> cipherAgents = agentService.getAllAgents();
         for (Agent cipherAgent : cipherAgents) {
-            cipherAgent.setFirstName(agentCryptographyService.decrypt(cipherAgent.getFirstName()));
-            cipherAgent.setLastName(agentCryptographyService.decrypt(cipherAgent.getLastName()));
+            cipherAgent.setFirstName(agentCryptographyService.getCryptographyValues(cipherAgent.getFirstName())[1]);
+            cipherAgent.setLastName(agentCryptographyService.getCryptographyValues(cipherAgent.getLastName())[1]);
         }
         model.addAttribute("agents", cipherAgents);
         return "home";
@@ -64,12 +65,13 @@ public class AppController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String saveAgent(@ModelAttribute("agent") Agent agent) throws NoSuchPaddingException,
-            InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException {
+            InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException,
+            InvalidAlgorithmParameterException {
 
         Key key = KeyGeneration.generateNewKey();
 
-        String cipherAgentFirstname = agentCryptographyService.encrypt(agent.getFirstName(), key);
-        String cipherAgentLastname = agentCryptographyService.encrypt(agent.getLastName(), key);
+        String cipherAgentFirstname = agentCryptographyService.getCryptographyValues(agent.getFirstName())[0];
+        String cipherAgentLastname = agentCryptographyService.getCryptographyValues(agent.getLastName())[0];
 
         EncryptionKey encryptionKey = new EncryptionKey(key.getEncoded());
         Agent cipherAgent = new Agent(cipherAgentFirstname, cipherAgentLastname, LocalDate.now(),
